@@ -2,24 +2,24 @@ import Ember from 'ember';
 
 export default Ember.Mixin.create({
 
-  /**
-      Parse the links in the JSONAPI response and convert to a meta-object
-  */
-  normalizeQueryResponse(store, clazz, payload) {
-    const result = this._super(...arguments);
-    result.meta = result.meta || {};
+    /**
+     Parse the links in the JSONAPI response and convert to a meta-object
+     */
+    normalizeQueryResponse(store, clazz, payload) {
+        const result = this._super(...arguments);
+        result.meta = result.meta || {};
 
-    if (payload.links) {
-      result.meta.pagination = this.createPageMeta(payload.links);
-    }
-    if (payload.meta) {
-      result.meta.count = payload.meta.count;
-    }
+        if (payload.links) {
+            result.meta.pagination = this.createPageMeta(payload.links);
+        }
+        if (payload.meta) {
+            result.meta.count = payload.meta.count;
+        }
 
-    return result;
-  },
+        return result;
+    },
 
-  /**
+    /**
      Transforms link URLs to objects containing metadata
      E.g.
      {
@@ -33,32 +33,36 @@ export default Ember.Mixin.create({
          previous: { number: 1, size: 10 },
          next: { number: 3, size: 10 }
      }
-   */
-  createPageMeta(data) {
-    let meta = {};
+     */
+    createPageMeta(data) {
+        let meta = {};
 
-    Object.keys(data).forEach(type => {
-      const link = data[type];
-      meta[type] = {};
+        Object.keys(data).forEach(type => {
+            const link = data[type];
+            meta[type] = {};
 
-      let a = document.createElement('a');
-      a.href = link;
-      let query = a.search.slice(1);
+            let a = document.createElement('a');
+            a.href = link;
+            let query = a.search.slice(1);
 
-      query.split('&').forEach(pairs => {
-        const [param, value] = pairs.split('=');
+            query.split('&').forEach(pairs => {
+                const [param, value] = pairs.split('=');
 
-        if (param === 'page[number]') {
-          meta[type].number = parseInt(value);
-        } else if (param === 'page[size]') {
-          meta[type].size = parseInt(value);
-        }
+                if (param === 'page[number]') {
+                    meta[type].number = parseInt(value);
+                } else if (param === 'page[size]') {
+                    meta[type].size = parseInt(value);
+                } else if (param === 'page[offset]') {
+                    meta[type].number = parseInt(value) - 1;
+                } else if (param === 'page[limit]') {
+                    meta[type].size = parseInt(value);
+                }
 
-      });
-      a = null;
-    });
+            });
+            a = null;
+        });
 
-    return meta;
-  }
+        return meta;
+    }
 
 });
