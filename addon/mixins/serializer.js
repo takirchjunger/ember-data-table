@@ -52,10 +52,13 @@ export default Mixin.create({
                     meta[type].number = parseInt(value);
                 } else if (param === 'page[size]') {
                     meta[type].size = parseInt(value);
-                } else if (param === 'page[offset]') {
-                    meta[type].number = parseInt(value) - 1;
-                } else if (param === 'page[limit]') {
+                }
+                else if (param === 'page[limit]') {
                     meta[type].size = parseInt(value);
+                }
+                else if (param === 'page[offset]') {
+                    let size = meta[type].size || 10;
+                    meta[type].number = (parseInt(value) / size) -1;
                 }
 
             });
