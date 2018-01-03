@@ -58,7 +58,8 @@ export default Mixin.create({
                 }
                 else if (param === 'page[offset]') {
                     let size = meta[type].size || 10;
-                    meta[type].number = (parseInt(value) / size) -1;
+                    let offset = parseInt(value);
+                    meta[type].number = (offset + size -1) / offset ;
                 }
 
             });
