@@ -59,7 +59,7 @@ export default Ember.Mixin.create({
                 else if (param === 'page[offset]') {
                     let size = meta[type].size || 10;
                     let offset = parseInt(value);
-                    meta[type].number = (offset + size -1) / offset ;
+                    meta[type].number = (offset + size -1) / size ;
                 }
 
             });
